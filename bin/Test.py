@@ -17,7 +17,7 @@ output = "../output"
 class TestMe:
     #def_init_(self):
 
-    def run(self):
+    def main(self):
         global opcodeStr
         global arg1
         global arg2
@@ -36,7 +36,9 @@ class TestMe:
             elif (sys.argv[i] == '-o' and i < (len(sys.argv) - 1)):
                 output = sys.argv[i + 1]
 
+
+
 if __name__=="__main__":
 
     test = TestMe()
-    test.run()
+    test.main()
