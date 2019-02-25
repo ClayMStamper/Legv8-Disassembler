@@ -1,5 +1,7 @@
 import sys
 import os
+import fileinput
+
 opcodeStr = [] # <type 'list'>: ['Invalid Instruction', 'ADDI', 'SW', 'Invalid Instruction', 'LW', 'BLTZ', 'SLL',...] instrSpaced = [] # <type 'list'>: ['0 01000 00000 00001 00000 00000 001010', '1 01000 00000 00001 00000 00000 001010',...]
 arg1 = [] # <type 'list'>: [0, 0, 0, 0, 0, 1, 1, 10, 10, 0, 3, 4, 152, 4, 10, 1, 0, 112, 0]
 arg2 = [] # <type 'list'>: [0, 1, 1, 0, 1, 0, 10, 3, 4, 5, 0, 5, 0, 5, 6, 1, 1, 0, 0]
@@ -11,10 +13,11 @@ mem = [] # <type 'list'>: [-1, -2, -3, 1, 2, 3, 0, 0, 5, -5, 6, 0, 0, 0, 0, 0, 0
 binMem = [] # <type 'list'>: ['11111111111111111111111111111111', '11111111111111111111111111111110', ...] opcode = []
 
 #input/output file paths
-input = "../input"
-output = "../output"
+input = "input"
+output = "output"
 
-class TestMe:
+class Disassembler:
+
     #def_init_(self):
 
     def run(self):
@@ -29,14 +32,27 @@ class TestMe:
         global binMem
         global opcode
 
+        #get file names
         for i in range(len(sys.argv)):
             if (sys.argv[i] == '-i' and i < (len(sys.argv) - 1)):
                 input = sys.argv[i + 1]
                 print input
             elif (sys.argv[i] == '-o' and i < (len(sys.argv) - 1)):
                 output = sys.argv[i + 1]
+                print output
+
+        #open file for reading
+        with open(input, 'r') as fin:
+            for line in fin:
+                print line
+
+
+
+
+
+
 
 if __name__=="__main__":
 
-    test = TestMe()
-    test.run()
+    dis = Disassembler()
+    dis.run()
