@@ -31,7 +31,7 @@ imMask = 0x3FFC00  # ARM I immediate
 shmtMask = 0xFC00  # ARM shamt
 addrMask = 0x1FF000  # ARM address for id and st
 addr2Mask = 0xFFFFE0  # addr for CB format
-imsftMask = 0x600000  # shift for IM format
+imsftMask = 0x600000  # shift for IM formatw
 imdataMask = 0x1FFFE0  # data for IM type
 
 #input/output file paths
@@ -43,34 +43,34 @@ class Disassembler:
     #def_init_(self):
     def run(self):
 
-        #get file names
-        for i in range(len(sys.argv)):
-            if (sys.argv[i] == '-i' and i < (len(sys.argv) - 1)):
-                input = sys.argv[i + 1]
-                print input
-            elif (sys.argv[i] == '-o' and i < (len(sys.argv) - 1)):
-                output = sys.argv[i + 1]
-                print output
+        setup()
 
-        #open file for reading
-        with open(input, 'r') as fin:
-            for line in fin:
-                mem.append(line)
 
-        test = []
-        #for i, digit in mem[0][::-1]:
-          #  print digit
-            #test.append(unsignedToTwos(mem[i]))
-        #unsignedToTwos(mem[0])
+def setup():
+    # get file names
+    for i in range(len(sys.argv)):
+        if (sys.argv[i] == '-i' and i < (len(sys.argv) - 1)):
+            input = sys.argv[i + 1]
+        elif (sys.argv[i] == '-o' and i < (len(sys.argv) - 1)):
+            output = sys.argv[i + 1]
 
-        i = 4
-        print "\ndecimal: " + mem[i]
-        print "2c:      " + unsingedToTwos(mem[i])
+    # open file for reading
+    with open(input, 'r') as fin:
+        for line in fin:
+            mem.append(line)
+
+def disassemble(instr):
+    opcode = (instr >> 21) & 0x1f
+    arg3 = (instr >> 16) & 0x1f
+    arg2 = (instr >> 5) & 0x1f
+    arg1 = instr & 0x1f
+
+
 
 
 def unsingedToTwos(bitString):
 
-    firstOne = False;
+    firstOne = False
     newBitString = ''
 
     for bit in bitString:
