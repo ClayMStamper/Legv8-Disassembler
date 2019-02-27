@@ -22,6 +22,7 @@ arg3Str = [] # <type 'list'>: ['', ', #10', '(R0)', '', '(R0)', '', ', #2', '(R1
 mem = [] # <type 'list'>: [-1, -2, -3, 1, 2, 3, 0, 0, 5, -5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
 binMem = [] # <type 'list'>: ['11111111111111111111111111111111', '11111111111111111111111111111110', ...] opcode = []
 opcode = []
+opcodeStr = []
 instructions = []
 instrSpaced = []
 
@@ -62,16 +63,17 @@ def setup():
 
 def disassemble():
     i = -1
-    for instr in mem:
+    for instr in instructions:
         i += 1
         if (str(bin(1112))[2:] in instr):
-            print opcodeStr.append("ADD")
-            arg1.append((int(instructions[i], base=2) & rnMask) >> 5)
-            arg2.append((int(instructions[i], base=2) & rnMask) >> 16)
-            arg3.append((int(instructions[i], base=2) & rnMask) >> 0)
+            opcodeStr.append("ADD")
+            arg1.append((int(instr, base=2) & rnMask) >> 5)
+            arg2.append((int(instr, base=2) & rnMask) >> 16)
+            arg3.append((int(instr, base=2) & rnMask) >> 0)
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
+
 
 def unsingedToTwos(bitString):
 
