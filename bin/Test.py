@@ -47,7 +47,9 @@ class Disassembler:
     def run(self):
         setup()
         disassemble()
+        formatOutput()
 
+#gets the arguments and read in input -> stores input in instructions
 def setup():
     # get file names
     for i in range(len(sys.argv)):
@@ -62,10 +64,9 @@ def setup():
             instructions.append(line)
 
 def disassemble():
-    i = -1
+    i = 0
     for instr in instructions:
-        i += 1
-        if (str(bin(1112))[2:] in instr):
+        if (str(bin(1112))[2:] in instr): #if opcode = 1112 -> ADD
             opcodeStr.append("ADD")
             arg1.append((int(instr, base=2) & rnMask) >> 5)
             arg2.append((int(instr, base=2) & rnMask) >> 16)
@@ -73,7 +74,33 @@ def disassemble():
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
+            instrSpaced.append(binToSpacedR(instr))
+        elif (str(bin(1624))[2:] in instr):
+            opcodeStr.append("SUB")
+            arg1.append((int(instr, base=2) & rnMask) >> 5)
+            arg2.append((int(instr, base=2) & rnMask) >> 16)
+            arg3.append((int(instr, base=2) & rnMask) >> 0)
+            arg1Str.append("\tR" + str(arg3[i]))
+            arg2Str.append(", R" + str(arg1[i]))
+            arg3Str.append(", R" + str(arg2[i]))
+            instrSpaced.append(binToSpacedR(instr))
 
+def formatOutput():
+    with open(output + "_dis.txt", 'w') as fout:
+        i = 0
+        for opcode in opcodeStr:
+            print instrSpaced[i] + " " + opcode + arg1Str[i] + arg2Str[i] + arg3Str[i]
+            i += 1
+
+def binToSpacedR(s):
+    spaced = s[0:11] + " " + s[11:16] + " " + s[16:22] + " " + s[22: 27]
+    spaced += " " + s[27:32]
+    return spaced
+
+def binToSpacedD(s):
+    spaced = s[0:11] + " " + s[11:20] + " " + s[20:22] + " " + s[22:27]
+    spaced += " " + s[27:32]
+    return spaced
 
 def unsingedToTwos(bitString):
 
