@@ -231,12 +231,12 @@ def disassemble():
 
 
 def formatOutput():
-    with open(output + "_dis.txt", 'w') as fout:
+    with open(output + "_dis.txt", 'w') as myFile:
         i = 0
         for opcode in opcodeStr:
-            writeData = instrSpaced[i] + " " + opcode + arg1Str[i] + arg2Str[i] + arg3Str[i]
+            writeData = instrSpaced[i] + "\t" + opcode + arg1Str[i] + arg2Str[i] + arg3Str[i] + '\n'
             print writeData
-            fout.write(writeData)
+            myFile.write(writeData)
             i += 1
 
 
