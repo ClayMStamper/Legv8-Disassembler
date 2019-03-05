@@ -68,9 +68,12 @@ def setup():
 
 def disassemble():
     i = 0
+    j = -1
     for instr in instructions:
 
-        mem.append(str(96 + (i * 4))) #memory location
+        j += 1
+
+        mem.append(str(96 + (j * 4))) #memory location
 
         if (str(bin(1112))[2:] in instr):  # if opcode = 1112 -> ADD
             opcodeStr.append("ADD")
@@ -169,7 +172,7 @@ def disassemble():
             arg3.append((int(instr, base=2) & rnMask) >> 0)  # R0
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", [R" + str(arg1[i]))
-            arg3Str.append(", #" + str(arg2[i]) + "]")
+            arg3Str.append(", #" + str(binToDecimal(instr[12:20])) + "]")
             instrSpaced.append(binToSpacedR(instr))
 
         elif (str(bin(1986))[2:] in instr):
@@ -179,15 +182,13 @@ def disassemble():
             arg3.append((int(instr, base=2) & rnMask) >> 0)  # address
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", [R" + str(arg1[i]))
-            arg3Str.append(", #" + str(arg2[i]) + "]")
+            arg3Str.append(", #" + str(binToDecimal(instr[12:20])) + "]")
             instrSpaced.append(binToSpacedR(instr))
 
 
         elif (str(bin(160))[2:] in instr[0:12]):  # need to include opcode range
             opcodeStr.append("B")
-            arg = bin(int(instr[6:32]))
-            arg1.append(arg)
-            arg1Str.append("\t#" + str(arg1[i]))
+            arg1Str.append("\t#" + str(binToDecimal(instr[6:32])))
             arg2Str.append('')
             arg3Str.append('')
             instrSpaced.append(binToSpacedB(instr))
@@ -224,7 +225,11 @@ def disassemble():
             '''''
             elif
             '''''
-            # add B, CBZ, CNBZ, MOVZ, MOVK
+      #  else: convert binary number
+            #if negative
+                #2s comp negative to decimal
+            #else
+                #2s comp positive to decimal (already helper function written)
 
 def formatOutput():
     with open(output + "_dis.txt", 'w') as myFile:
@@ -257,6 +262,20 @@ def binToSpacedB(s):
 def binToSpacedCB(s):
     return s[0:8] + " " + s[8:27] + " " + s[27: 32]
 
+def binToDecimal(s):
+
+    flipped = s[::-1]
+    value = 0
+    i = 0
+
+    for char in flipped:
+        if (char == '1'):
+            value += 2**i
+        i += 1
+
+
+
+    return value
 
 def unsingedToTwos(bitString):
     firstOne = False
