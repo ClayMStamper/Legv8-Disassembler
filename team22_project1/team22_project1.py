@@ -2,17 +2,6 @@ import sys
 import os
 import fileinput
 
-global opcodeStr
-global arg1
-global arg2
-global arg3
-global arg1Str
-global arg2Str
-global arg3Str
-global mem
-global binMem
-global opcode
-
 arg1 = []  # <type 'list'>: [0, 0, 0, 0, 0, 1, 1, 10, 10, 0, 3, 4, 152, 4, 10, 1, 0, 112, 0]
 arg2 = []  # <type 'list'>: [0, 1, 1, 0, 1, 0, 10, 3, 4, 5, 0, 5, 0, 5, 6, 1, 1, 0, 0]
 arg3 = []  # <type 'list'>: [0, 10, 264, 0, 264, 48, 2, 172, 216, 260, 8, 6, 0, 6, 172, -1, 264, 0, 0]
@@ -44,6 +33,17 @@ output = "output"
 
 class Disassembler:
 
+    global opcodeStr
+    global arg1
+    global arg2
+    global arg3
+    global arg1Str
+    global arg2Str
+    global arg3Str
+    global mem
+    global binMem
+    global opcode
+
     # def_init_(self):
     def run(self):
         setup()
@@ -69,11 +69,14 @@ def setup():
 def disassemble():
     i = 0
     for instr in instructions:
+
+        mem.append(str(96 + (i * 4))) #memory location
+
         if (str(bin(1112))[2:] in instr):  # if opcode = 1112 -> ADD
             opcodeStr.append("ADD")
             arg1.append((int(instr, base=2) & rnMask) >> 5)
-            arg2.append((int(instr, base=2) & rnMask) >> 16)
-            arg3.append((int(instr, base=2) & rnMask) >> 0)
+            arg2.append((int(instr, base=2) & rmMask) >> 16)
+            arg3.append((int(instr, base=2) & rdMask) >> 0)
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
@@ -82,8 +85,8 @@ def disassemble():
         elif (str(bin(1624))[2:] in instr):
             opcodeStr.append("SUB")
             arg1.append((int(instr, base=2) & rnMask) >> 5)
-            arg2.append((int(instr, base=2) & rnMask) >> 16)
-            arg3.append((int(instr, base=2) & rnMask) >> 0)
+            arg2.append((int(instr, base=2) & rmMask) >> 16)
+            arg3.append((int(instr, base=2) & rdMask) >> 0)
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
@@ -91,9 +94,9 @@ def disassemble():
 
         elif (str(bin(1160))[2:] in instr or str(bin(1161))[2:] in instr):
             opcodeStr.append("ADDI")
-            arg1.append((int(instr, base=2) & rnMask) >> 5)  # arg1 is R2
-            arg2.append((int(instr, base=2) & rnMask) >> 10)  # arg2 is shamt
-            arg3.append((int(instr, base=2) & rnMask) >> 0)  # arg3 is R1
+            arg1.append((int(instr, base=2) & rnMask) >> 5)
+            arg2.append((int(instr, base=2) & rmMask) >> 10)
+            arg3.append((int(instr, base=2) & rdMask) >> 0)
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
@@ -101,9 +104,9 @@ def disassemble():
 
         elif (str(bin(1672))[2:] in instr or str(bin(1673))[2:] in instr):
             opcodeStr.append("SUBI")
-            arg1.append((int(instr, base=2) & rnMask) >> 5)  # arg1 is R2
-            arg2.append((int(instr, base=2) & rnMask) >> 10)  # arg2 is shamt
-            arg3.append((int(instr, base=2) & rnMask) >> 0)  # arg3 is R1
+            arg1.append((int(instr, base=2) & rnMask) >> 5)
+            arg2.append((int(instr, base=2) & rmMask) >> 10)
+            arg3.append((int(instr, base=2) & rdMask) >> 0)
             arg1Str.append("\tR" + str(arg3[i]))
             arg2Str.append(", R" + str(arg1[i]))
             arg3Str.append(", R" + str(arg2[i]))
@@ -208,12 +211,7 @@ def disassemble():
             instrSpaced.append(binToSpacedCB(instr))
 
 
-        elif (str(bin(00000000000))[2:] in instr[0:11]):
-            opcodeStr.append("\tNOP")
-            arg1Str.append('')
-            arg2Str.append('')
-            arg3Str.append('')
-            instrSpaced.append(instr)
+
 
         elif (str(bin(2038))[2:] in instr):
             opcodeStr.append("\tBREAK")
@@ -226,15 +224,13 @@ def disassemble():
             '''''
             elif
             '''''
-
             # add B, CBZ, CNBZ, MOVZ, MOVK
-
 
 def formatOutput():
     with open(output + "_dis.txt", 'w') as myFile:
         i = 0
         for opcode in opcodeStr:
-            writeData = instrSpaced[i] + "\t" + opcode + arg1Str[i] + arg2Str[i] + arg3Str[i] + '\n'
+            writeData = instrSpaced[i] + "\t" + mem[i] + ' ' + opcode + arg1Str[i] + arg2Str[i] + arg3Str[i] + '\n'
             print writeData
             myFile.write(writeData)
             i += 1
@@ -280,11 +276,6 @@ def unsingedToTwos(bitString):
     # print "bit string now = " + newBitString
 
     return newBitString
-
-
-def bitStringToArm(bits):
-    mem.append(bits)
-
 
 if __name__ == "__main__":
     dis = Disassembler()
